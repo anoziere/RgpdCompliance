@@ -4,18 +4,11 @@
         xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_2.xsd">
     <fullnamespace>RgpdCompliance\RgpdCompliance</fullnamespace>
     <descriptive locale="en_US">
-        <title>Automatically generated module - please update module.xml file</title>
-        <!--
-        <subtitle></subtitle>
-        <description></description>
-        <postscriptum></postscriptum>
-        -->
+        <title>A module trying to comply with GDPR regulations in the EU</title>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title>Module généré automatiquement - éditez le fichier module.xml</title>
+        <title>Un module essayant de se conformer aux réglementations RGPD dans l'UE</title>
     </descriptive>
-    <!-- <logo></logo> -->
-    <!--<images-folder>images</images-folder>-->
     <languages>
         <language>en_US</language>
         <language>fr_FR</language>
@@ -23,19 +16,11 @@
     <version></version>
     <authors>
         <author>
-            <name></name>
-            <email></email>
+            <name>Openstudio - Alexandre Nozière</name>
+            <email>anoziere@openstudio.fr</email>
         </author>
     </authors>
     <type>classic</type>
-    <!--
-    module dependencies
-    <required>
-        <module version="&gt;=0.1">Front</module>
-        <module version="~1.0">HookCart</module>
-        <module version="&gt;0.2">HookSearch</module>
-    </required>
-    -->
     <thelia>2.5.0</thelia>
     <stability>other</stability>
     <mandatory>0</mandatory>
