@@ -1,0 +1,12 @@
+{
+  "name": "thelia/rgpd-compliance-module",
+  "description": "A module trying to comply with GDPR regulations in the EU",
+  "license": "LGPL-3.0-or-later",
+  "type": "thelia-module",
+  "require": {
+    "thelia/installer": "~1.1"
+  },
+  "extra": {
+    "installer-name": "RgpdCompliance"
+  }
+}
