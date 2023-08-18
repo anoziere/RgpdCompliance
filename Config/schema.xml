@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database defaultIdMethod="native" name="TheliaMain"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="../../../vendor/thelia/propel/resources/xsd/database.xsd" >
-    <!--
-    See propel documentation on http://propelorm.org for all information about schema file
-
-    <table name="product_rel" namespace="RgpdCompliance\Model">
+          xsi:noNamespaceSchemaLocation="../../../../vendor/thelia/propel/resources/xsd/database.xsd" >
+    <!--table name="rgpd_compliance_login_logs" namespace="RgpdCompliance\Model">
         <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
         <column defaultValue="0" name="visible" required="true" type="TINYINT" />
         <column defaultValue="0" name="position" required="true" type="INTEGER" />
@@ -20,7 +17,6 @@
         <behavior name="i18n">
             <parameter name="i18n_columns" value="title, description, chapo, postscriptum" />
         </behavior>
-    </table>
-    -->
+    </table-->
   <external-schema filename="local/config/schema.xml" referenceOnly="true" />
 </database>

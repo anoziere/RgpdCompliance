@@ -4,10 +4,12 @@
         xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_2.xsd">
     <fullnamespace>RgpdCompliance\RgpdCompliance</fullnamespace>
     <descriptive locale="en_US">
-        <title>A module trying to comply with GDPR regulations in the EU</title>
+        <title>GDPR regulations in the EU</title>
+        <description>A module trying to comply with GDPR regulations in the EU</description>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title>Un module essayant de se conformer aux réglementations RGPD dans l'UE</title>
+        <title>Réglementations RGPD au sein de l'UE</title>
+        <description>A module trying to comply with GDPR regulations in the EU</description>
     </descriptive>
     <languages>
         <language>en_US</language>

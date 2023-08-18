@@ -1,0 +1,105 @@
+<div class="general-block-decorator col-md-12">
+    <div class="title title-without-tabs">{intl l="RgpdCompliance configurations" d="rgpdcompliance.bo.default"}</div>
+    {form name='rgpdcompliance_form_config'}
+    <form method="post" action="{url path='/admin/module/RgpdCompliance/save'}">
+        {include
+            file = "includes/inner-form-toolbar.html"
+            hide_submit_buttons = false
+            hide_flags = true
+            hide_save_and_close_button = true
+
+            page_url  = {url path="/admin/module/RgpdCompliance"}
+            close_url = {url path="/admin/modules"}
+        }
+        {if $form_error|default:null}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+        {form_hidden_fields}
+        {render_form_field field="success_url" value={url path='/admin/module/RgpdCompliance'}}
+        {render_form_field field="error_url" value={url path='/admin/module/RgpdCompliance'}}
+        <fieldset class="border p-2">
+            <legend class="float-none w-auto">
+                <h3 class='py-2 text-uppercase'>{intl l="Password settings" d="rgpdcompliance.bo.default"}</h3>
+            </legend>
+            <div class="col-md-4">
+                {form_field form=$form field="rgpdcompliance_password_min_length"}
+                <div class="form-group {if $error}has-error{/if}">
+                    <label class="control-label">
+                        {$label}
+                        {form_error form=$form field="rgpdcompliance_password_min_length"}
+                        <br />
+                        <span class="error">{$message|default:null}</span>
+                        {/form_error}
+                    </label>
+                    <input type="number" min="3" max="150" class="form-control" name="{$name}" value="{$configurationVariables.rgpdcompliance_password_min_length}" />
+                </div>
+                {/form_field}
+            </div>
+            <div class="col-md-4">
+                {form_field form=$form field="rgpdcompliance_password_has_upper"}
+                <div class="form-group {if $error}has-error{/if}">
+                    <label class="control-label">
+                        {$label}
+                        {form_error form=$form field="rgpdcompliance_password_has_upper"}
+                        <br />
+                        <span class="error">{$message|default:null}</span>
+                        {/form_error}
+                    </label>
+
+                    <select name="{$name}" class="form-control">
+                        <option value="1" {if $configurationVariables.rgpdcompliance_password_has_upper eq 1}selected{/if}>
+                            {intl l="Yes" d="rgpdcompliance.bo.default"}
+                        </option>
+                        <option value="0" {if $configurationVariables.rgpdcompliance_password_has_upper eq 0}selected{/if}>
+                            {intl l="No" d="rgpdcompliance.bo.default"}
+                        </option>
+                    </select>
+                </div>
+                {/form_field}
+            </div>
+            <div class="col-md-4">
+                {form_field form=$form field="rgpdcompliance_password_has_number"}
+                <div class="form-group {if $error}has-error{/if}">
+                    <label class="control-label">
+                        {$label}
+                        {form_error form=$form field="rgpdcompliance_password_has_number"}
+                        <br />
+                        <span class="error">{$message|default:null}</span>
+                        {/form_error}
+                    </label>
+
+                    <select name="{$name}" class="form-control">
+                        <option value="1" {if $configurationVariables.rgpdcompliance_password_has_number eq 1}selected{/if}>
+                        {intl l="Yes" d="rgpdcompliance.bo.default"}
+                        </option>
+                        <option value="0" {if $configurationVariables.rgpdcompliance_password_has_number eq 0}selected{/if}>
+                        {intl l="No" d="rgpdcompliance.bo.default"}
+                        </option>
+                    </select>
+                </div>
+                {/form_field}
+            </div>
+            <div class="col-md-4">
+                {form_field form=$form field="rgpdcompliance_password_has_special_chars"}
+                <div class="form-group {if $error}has-error{/if}">
+                    <label class="control-label">
+                        {$label}
+                        {form_error form=$form field="rgpdcompliance_password_has_special_chars"}
+                        <br />
+                        <span class="error">{$message|default:null}</span>
+                        {/form_error}
+                    </label>
+
+                    <select name="{$name}" class="form-control">
+                        <option value="1" {if $configurationVariables.rgpdcompliance_password_has_special_chars eq 1}selected{/if}>
+                        {intl l="Yes" d="rgpdcompliance.bo.default"}
+                        </option>
+                        <option value="0" {if $configurationVariables.rgpdcompliance_password_has_special_chars eq 0}selected{/if}>
+                        {intl l="No" d="rgpdcompliance.bo.default"}
+                        </option>
+                    </select>
+                </div>
+                {/form_field}
+            </div>
+        </fieldset>
+    </form>
+    {/form}
+</div>
