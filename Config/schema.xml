@@ -2,21 +2,24 @@
 <database defaultIdMethod="native" name="TheliaMain"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="../../../../vendor/thelia/propel/resources/xsd/database.xsd" >
-    <!--table name="rgpd_compliance_login_logs" namespace="RgpdCompliance\Model">
-        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
-        <column defaultValue="0" name="visible" required="true" type="TINYINT" />
-        <column defaultValue="0" name="position" required="true" type="INTEGER" />
-        <column name="title" size="255" type="VARCHAR" />
-        <column name="description" type="CLOB" />
-        <column name="chapo" type="LONGVARCHAR" />
-        <column name="postscriptum" type="LONGVARCHAR" />
-        <foreign-key foreignTable="product" name="fk_product_id" onDelete="CASCADE" onUpdate="RESTRICT">
-            <reference foreign="id" local="product_id" />
+    <table name="rgpd_compliance_login_logs" namespace="RgpdCompliance\Model">
+        <column name="id" primaryKey="true" required="true" type="INTEGER" autoIncrement="true" />
+        <column name="customer_id" type="INTEGER" />
+        <column name="email" size="255" type="VARCHAR" />
+        <foreign-key foreignTable="customer" name="fk_rgpd_compliance_login_logs_customer_id" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="customer_id" />
         </foreign-key>
         <behavior name="timestampable" />
-        <behavior name="i18n">
-            <parameter name="i18n_columns" value="title, description, chapo, postscriptum" />
-        </behavior>
-    </table-->
+    </table>
+
+    <table name="rgpd_compliance_customer_blocked" namespace="RgpdCompliance\Model">
+        <column name="id" primaryKey="true" required="true" type="INTEGER" autoIncrement="true" />
+        <column name="customer_id" type="INTEGER" required="true" />
+        <column name="end_of_blocking" type="TIMESTAMP" />
+        <foreign-key foreignTable="customer" name="fk_rgpd_compliance_customer_blocked_customer_id" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="customer_id" />
+        </foreign-key>
+        <behavior name="timestampable" />
+    </table>
   <external-schema filename="local/config/schema.xml" referenceOnly="true" />
 </database>

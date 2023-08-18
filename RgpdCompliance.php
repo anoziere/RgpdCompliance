@@ -13,21 +13,39 @@ class RgpdCompliance extends BaseModule
     /** @var string */
     public const DOMAIN_NAME = 'rgpdcompliance';
 
-    public const DEFAULT_VALUE_PASSWORD_LENGTH = 8;
-    public const DEFAULT_VALUE_PASSWORD_HAS_UPPER = true;
-    public const DEFAULT_VALUE_PASSWORD_HAS_SPECIAL_CHARS = true;
-    public const DEFAULT_VALUE_PASSWORD_HAS_NUMBER = true;
-
+    /** PASSWORD SETTINGS */
     public const CONFIG_NAME_PASSWORD_LENGTH = self::DOMAIN_NAME.'_password_min_length';
     public const CONFIG_NAME_PASSWORD_HAS_UPPER = self::DOMAIN_NAME.'_password_has_upper';
     public const CONFIG_NAME_PASSWORD_HAS_NUMBER = self::DOMAIN_NAME.'_password_has_number';
     public const CONFIG_NAME_PASSWORD_HAS_SPECIAL_CHARS = self::DOMAIN_NAME.'_password_has_special_chars';
 
+    public const DEFAULT_VALUE_PASSWORD_LENGTH = 8;
+    public const DEFAULT_VALUE_PASSWORD_HAS_UPPER = true;
+    public const DEFAULT_VALUE_PASSWORD_HAS_SPECIAL_CHARS = true;
+    public const DEFAULT_VALUE_PASSWORD_HAS_NUMBER = true;
+    /** END PASSWORD SETTINGS */
+
+    /** ACCOUNT SETTINGS BLOCKED TRYING TO LOGIN */
+    public const CONFIG_MAX_TRY_LOGIN = self::DOMAIN_NAME.'_max_try_login';
+    public const CONFIG_PERIOD_LOGIN_FAILED = self::DOMAIN_NAME.'_period_login_failed';
+    public const CONFIG_LOGIN_BLOCKED_DURATION = self::DOMAIN_NAME.'_logion_blocked_duration';
+
+    public const DEFAULT_VALUE_MAX_TRY_LOGIN = 5;
+    public const DEFAULT_VALUE_PERIOD_LOGIN_FAILED = 3600; //seconds
+    public const DEFAULT_VALUE_LOGIN_BLOCKED_DURATION = 3600; //seconds
+    /** END ACCOUNT SETTINGS BLOCKED TRYING TO LOGIN */
+
+
     public const CONFIG_VARIABLES = [
+        //Password
         self::CONFIG_NAME_PASSWORD_LENGTH =>  self::DEFAULT_VALUE_PASSWORD_LENGTH,
         self::CONFIG_NAME_PASSWORD_HAS_UPPER =>  self::DEFAULT_VALUE_PASSWORD_HAS_UPPER,
         self::CONFIG_NAME_PASSWORD_HAS_SPECIAL_CHARS => self::DEFAULT_VALUE_PASSWORD_HAS_SPECIAL_CHARS,
         self::CONFIG_NAME_PASSWORD_HAS_NUMBER => self::DEFAULT_VALUE_PASSWORD_HAS_NUMBER,
+        //account blocked failed login
+        self::CONFIG_MAX_TRY_LOGIN =>  self::DEFAULT_VALUE_MAX_TRY_LOGIN,
+        self::CONFIG_PERIOD_LOGIN_FAILED =>  self::DEFAULT_VALUE_PERIOD_LOGIN_FAILED,
+        self::CONFIG_LOGIN_BLOCKED_DURATION =>  self::DEFAULT_VALUE_LOGIN_BLOCKED_DURATION,
     ];
 
     public function postActivation(ConnectionInterface $con = null): void
