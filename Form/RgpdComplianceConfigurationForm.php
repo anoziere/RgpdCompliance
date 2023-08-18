@@ -18,7 +18,7 @@ class RgpdComplianceConfigurationForm extends BaseForm
     {
         $this->formBuilder
             ->add(
-                RgpdCompliance::DOMAIN_NAME . '_password_min_length',
+                RgpdCompliance::CONFIG_NAME_PASSWORD_LENGTH,
                 IntegerType::class,
                 ['label' => $this->translator->trans('Password minimun length', [], 'rgpdcompliance.bo.default')]
             )
@@ -34,7 +34,7 @@ class RgpdComplianceConfigurationForm extends BaseForm
                 ]
             )
             ->add(
-                RgpdCompliance::DOMAIN_NAME . '_password_has_number',
+                RgpdCompliance::CONFIG_NAME_PASSWORD_HAS_NUMBER,
                 ChoiceType::class,
                 [
                     'label' => $this->translator->trans('Password should have at least one number', [], 'rgpdcompliance.bo.default'),
@@ -45,7 +45,7 @@ class RgpdComplianceConfigurationForm extends BaseForm
                 ]
             )
             ->add(
-                RgpdCompliance::DOMAIN_NAME . '_password_has_special_chars',
+                RgpdCompliance::CONFIG_NAME_PASSWORD_HAS_SPECIAL_CHARS,
                 ChoiceType::class,
                 [
                     'label' => $this->translator->trans('Password should have at least one special character', [], 'rgpdcompliance.bo.default'),
