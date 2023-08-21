@@ -21,7 +21,7 @@ class ConfigurationController extends BaseAdminController
     /**
      * @Route("/save", name="_save", methods="POST")
      */
-    public function save(ParserContext $parserContext): RedirectResponse|Response|null
+    public function save(): RedirectResponse|Response|null
     {
         $configForm = $this->createForm(RgpdComplianceConfigurationForm::getName());
 

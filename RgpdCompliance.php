@@ -2,22 +2,31 @@
 
 namespace RgpdCompliance;
 
+use Exception;
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\PropelException;
+use SplFileInfo;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Thelia\Core\Translation\Translator;
 use Thelia\Install\Database;
+use Thelia\Model\LangQuery;
+use Thelia\Model\Message;
+use Thelia\Model\MessageQuery;
 use Thelia\Module\BaseModule;
 
 class RgpdCompliance extends BaseModule
 {
     /** @var string */
     public const DOMAIN_NAME = 'rgpdcompliance';
+    public const MESSAGE_CODE = 'send_notification_blocked';
 
     /** PASSWORD SETTINGS */
-    public const CONFIG_NAME_PASSWORD_LENGTH = self::DOMAIN_NAME.'_password_min_length';
-    public const CONFIG_NAME_PASSWORD_HAS_UPPER = self::DOMAIN_NAME.'_password_has_upper';
-    public const CONFIG_NAME_PASSWORD_HAS_NUMBER = self::DOMAIN_NAME.'_password_has_number';
-    public const CONFIG_NAME_PASSWORD_HAS_SPECIAL_CHARS = self::DOMAIN_NAME.'_password_has_special_chars';
+    public const CONFIG_PASSWORD_LENGTH = self::DOMAIN_NAME.'_password_min_length';
+    public const CONFIG_PASSWORD_HAS_UPPER = self::DOMAIN_NAME.'_password_has_upper';
+    public const CONFIG_PASSWORD_HAS_NUMBER = self::DOMAIN_NAME.'_password_has_number';
+    public const CONFIG_PASSWORD_HAS_SPECIAL_CHARS = self::DOMAIN_NAME.'_password_has_special_chars';
 
     public const DEFAULT_VALUE_PASSWORD_LENGTH = 8;
     public const DEFAULT_VALUE_PASSWORD_HAS_UPPER = true;
@@ -27,27 +36,30 @@ class RgpdCompliance extends BaseModule
 
     /** ACCOUNT SETTINGS BLOCKED TRYING TO LOGIN */
     public const CONFIG_MAX_TRY_LOGIN = self::DOMAIN_NAME.'_max_try_login';
-    public const CONFIG_PERIOD_LOGIN_FAILED = self::DOMAIN_NAME.'_period_login_failed';
-    public const CONFIG_LOGIN_BLOCKED_DURATION = self::DOMAIN_NAME.'_logion_blocked_duration';
+    public const CONFIG_PERIOD_LOGIN_CHECK_FAILED = self::DOMAIN_NAME.'_period_login_check_failed';
+    public const CONFIG_LOGIN_BLOCKED_DURATION = self::DOMAIN_NAME.'_login_blocked_duration';
 
     public const DEFAULT_VALUE_MAX_TRY_LOGIN = 5;
-    public const DEFAULT_VALUE_PERIOD_LOGIN_FAILED = 3600; //seconds
+    public const DEFAULT_VALUE_PERIOD_LOGIN_CHECK_FAILED = 3600; //seconds
     public const DEFAULT_VALUE_LOGIN_BLOCKED_DURATION = 3600; //seconds
     /** END ACCOUNT SETTINGS BLOCKED TRYING TO LOGIN */
 
 
     public const CONFIG_VARIABLES = [
         //Password
-        self::CONFIG_NAME_PASSWORD_LENGTH =>  self::DEFAULT_VALUE_PASSWORD_LENGTH,
-        self::CONFIG_NAME_PASSWORD_HAS_UPPER =>  self::DEFAULT_VALUE_PASSWORD_HAS_UPPER,
-        self::CONFIG_NAME_PASSWORD_HAS_SPECIAL_CHARS => self::DEFAULT_VALUE_PASSWORD_HAS_SPECIAL_CHARS,
-        self::CONFIG_NAME_PASSWORD_HAS_NUMBER => self::DEFAULT_VALUE_PASSWORD_HAS_NUMBER,
-        //account blocked failed login
+        self::CONFIG_PASSWORD_LENGTH =>  self::DEFAULT_VALUE_PASSWORD_LENGTH,
+        self::CONFIG_PASSWORD_HAS_UPPER =>  self::DEFAULT_VALUE_PASSWORD_HAS_UPPER,
+        self::CONFIG_PASSWORD_HAS_SPECIAL_CHARS => self::DEFAULT_VALUE_PASSWORD_HAS_SPECIAL_CHARS,
+        self::CONFIG_PASSWORD_HAS_NUMBER => self::DEFAULT_VALUE_PASSWORD_HAS_NUMBER,
+        //Account blocked failed login
         self::CONFIG_MAX_TRY_LOGIN =>  self::DEFAULT_VALUE_MAX_TRY_LOGIN,
-        self::CONFIG_PERIOD_LOGIN_FAILED =>  self::DEFAULT_VALUE_PERIOD_LOGIN_FAILED,
-        self::CONFIG_LOGIN_BLOCKED_DURATION =>  self::DEFAULT_VALUE_LOGIN_BLOCKED_DURATION,
+        self::CONFIG_PERIOD_LOGIN_CHECK_FAILED => self::DEFAULT_VALUE_PERIOD_LOGIN_CHECK_FAILED,
+        self::CONFIG_LOGIN_BLOCKED_DURATION => self::DEFAULT_VALUE_LOGIN_BLOCKED_DURATION,
     ];
 
+    /**
+     * @throws PropelException
+     */
     public function postActivation(ConnectionInterface $con = null): void
     {
         foreach(self::CONFIG_VARIABLES as $variableName => $defaultValue) {
@@ -56,9 +68,10 @@ class RgpdCompliance extends BaseModule
             }
         }
         if (!self::getConfigValue(self::DOMAIN_NAME.'_is_initialized', false)) {
-            //(new Database($con))->insertSql(null, array(__DIR__ . '/Config/TheliaMain.sql'));
+            (new Database($con))->insertSql(null, array(__DIR__ . '/Config/TheliaMain.sql'));
             self::setConfigValue(self::DOMAIN_NAME.'_is_initialized', true);
         }
+        $this->createEmailMessage();
     }
 
     /**
@@ -69,9 +82,7 @@ class RgpdCompliance extends BaseModule
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"])
-            ->autowire(true)
-            ->autoconfigure(true);
+            ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"]);
     }
 
     /**
@@ -79,7 +90,8 @@ class RgpdCompliance extends BaseModule
      *
      * @param $currentVersion
      * @param $newVersion
-     * @param ConnectionInterface $con
+     * @param ConnectionInterface|null $con
+     * @throws PropelException
      */
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
@@ -97,11 +109,46 @@ class RgpdCompliance extends BaseModule
 
         $database = new Database($con);
 
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($finder as $file) {
             if (version_compare($currentVersion, $file->getBasename('.sql'), '<')) {
                 $database->insertSql(null, [$file->getPathname()]);
             }
         }
+        $this->createEmailMessage();
     }
+
+    /**
+     * @throws PropelException
+     */
+    protected function createEmailMessage(): void
+    {
+        if (null !== MessageQuery::create()->findOneByName(self::MESSAGE_CODE)) {
+            return;
+        }
+        $message = new Message();
+        $message
+            ->setName(self::MESSAGE_CODE)
+            ->setHtmlTemplateFileName(self::MESSAGE_CODE . '.html')
+            ->setHtmlLayoutFileName('')
+            ->setSecured(0);
+
+        $languages = LangQuery::create()->find();
+
+        foreach ($languages as $language) {
+            $locale = $language->getLocale();
+
+            $message->setLocale($locale);
+
+            $message->setSubject(
+                Translator::getInstance()?->trans('Your account has been blocked', [], self::DOMAIN_NAME, $locale)
+            );
+            $message->setTitle(
+                Translator::getInstance()?->trans('Account blocked notification', [],self::DOMAIN_NAME, $locale)
+            );
+        }
+
+        $message->save();
+    }
+
 }

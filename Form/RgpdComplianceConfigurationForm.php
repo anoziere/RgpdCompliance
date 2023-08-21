@@ -18,7 +18,7 @@ class RgpdComplianceConfigurationForm extends BaseForm
     {
         $this->formBuilder
             ->add(
-                RgpdCompliance::CONFIG_NAME_PASSWORD_LENGTH,
+                RgpdCompliance::CONFIG_PASSWORD_LENGTH,
                 IntegerType::class,
                 ['label' => $this->translator->trans('Password minimun length', [], 'rgpdcompliance.bo.default')]
             )
@@ -34,7 +34,7 @@ class RgpdComplianceConfigurationForm extends BaseForm
                 ]
             )
             ->add(
-                RgpdCompliance::CONFIG_NAME_PASSWORD_HAS_NUMBER,
+                RgpdCompliance::CONFIG_PASSWORD_HAS_NUMBER,
                 ChoiceType::class,
                 [
                     'label' => $this->translator->trans('Password should have at least one number', [], 'rgpdcompliance.bo.default'),
@@ -45,7 +45,7 @@ class RgpdComplianceConfigurationForm extends BaseForm
                 ]
             )
             ->add(
-                RgpdCompliance::CONFIG_NAME_PASSWORD_HAS_SPECIAL_CHARS,
+                RgpdCompliance::CONFIG_PASSWORD_HAS_SPECIAL_CHARS,
                 ChoiceType::class,
                 [
                     'label' => $this->translator->trans('Password should have at least one special character', [], 'rgpdcompliance.bo.default'),
@@ -54,6 +54,22 @@ class RgpdComplianceConfigurationForm extends BaseForm
                         $this->translator->trans('No', [], 'rgpdcompliance.bo.default') => false,
                     ]
                 ]
-            );
+            )
+            ->add(
+                RgpdCompliance::CONFIG_MAX_TRY_LOGIN,
+                IntegerType::class,
+                ['label' => $this->translator->trans('Maximum number of login attempts before blocking', [], 'rgpdcompliance.bo.default')]
+            )
+            ->add(
+                RgpdCompliance::CONFIG_PERIOD_LOGIN_CHECK_FAILED,
+                IntegerType::class,
+                ['label' => $this->translator->trans('Verification window for connection attempts (in seconds)', [], 'rgpdcompliance.bo.default')]
+            )
+            ->add(
+                RgpdCompliance::CONFIG_LOGIN_BLOCKED_DURATION,
+                IntegerType::class,
+                ['label' => $this->translator->trans('Duration of blocking (in seconds)', [], 'rgpdcompliance.bo.default')]
+            )
+        ;
     }
 }
